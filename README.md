@@ -84,7 +84,7 @@ Older versions of Swift and XCode don't support MessageKit via SPM.
 
 > For iOS 11 please use version 3.3.0
 
-> For iOS 9 and iOS 10 please use version 3.1.0
+> For iOS 9 and iOS 10 please use version 3.1.1
 
 ## Getting Started
 
@@ -191,6 +191,7 @@ Add your app to the list of apps using this library and make a pull request.
 - [Charge Running](https://apps.apple.com/app/charge-running-live-coaching/id1204578360)
 - [HER](https://apps.apple.com/us/app/id573328837)
 - [Girlfriend Plus](https://apps.apple.com/us/app/girlfriend-plus/id1011637655)
+- [Noon Happen](https://apps.apple.com/app/id1477310602)
 
 _Please provide attribution, it is greatly appreciated._
 

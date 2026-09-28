@@ -1,6 +1,6 @@
 // MIT License
 //
-// Copyright (c) 2017-2020 MessageKit
+// Copyright (c) 2017-2026 MessageKit
 //
 // Permission is hereby granted, free of charge, to any person obtaining a copy
 // of this software and associated documentation files (the "Software"), to deal
@@ -26,37 +26,15 @@ import XCTest
 
 // MARK: - MessagesViewControllerTests
 
+@MainActor
 final class MessagesViewControllerTests: XCTestCase {
   // MARK: Internal
-
-  var sut: MessagesViewController!
-
-  // swiftlint:enable weak_delegate
-
-  // MARK: - Overridden Methods
-
-  override func setUp() {
-    super.setUp()
-
-    sut = MessagesViewController()
-    sut.messagesCollectionView.messagesLayoutDelegate = layoutDelegate
-    sut.messagesCollectionView.messagesDisplayDelegate = layoutDelegate
-    _ = sut.view
-    sut.beginAppearanceTransition(true, animated: true)
-    sut.endAppearanceTransition()
-    sut.view.layoutIfNeeded()
-  }
-
-  override func tearDown() {
-    sut = nil
-
-    super.tearDown()
-  }
 
   // MARK: - Test
 
   func testNumberOfSectionWithoutData_isZero() {
     let messagesDataSource = MockMessagesDataSource()
+    let sut = makeSUT()
     sut.messagesCollectionView.messagesDataSource = messagesDataSource
 
     XCTAssertEqual(sut.messagesCollectionView.numberOfSections, 0)
@@ -64,19 +42,21 @@ final class MessagesViewControllerTests: XCTestCase {
 
   func testNumberOfSection_isNumberOfMessages() {
     let messagesDataSource = MockMessagesDataSource()
+    let sut = makeSUT()
     sut.messagesCollectionView.messagesDataSource = messagesDataSource
     messagesDataSource.messages = makeMessages(for: messagesDataSource.senders)
 
     sut.messagesCollectionView.reloadData()
 
     let count = sut.messagesCollectionView.numberOfSections
-    let expectedCount = messagesDataSource.numberOfSections(in: sut.messagesCollectionView)
+    let expectedCount = messagesDataSource.numberOfMessageSections(in: sut.messagesCollectionView)
 
     XCTAssertEqual(count, expectedCount)
   }
 
   func testNumberOfItemInSection_isOne() {
     let messagesDataSource = MockMessagesDataSource()
+    let sut = makeSUT()
     sut.messagesCollectionView.messagesDataSource = messagesDataSource
     messagesDataSource.messages = makeMessages(for: messagesDataSource.senders)
 
@@ -88,6 +68,7 @@ final class MessagesViewControllerTests: XCTestCase {
 
   func testCellForItemWithTextData_returnsTextMessageCell() {
     let messagesDataSource = MockMessagesDataSource()
+    let sut = makeSUT()
     sut.messagesCollectionView.messagesDataSource = messagesDataSource
     messagesDataSource.messages.append(MockMessage(
       text: "Test",
@@ -106,6 +87,7 @@ final class MessagesViewControllerTests: XCTestCase {
 
   func testCellForItemWithAttributedTextData_returnsTextMessageCell() {
     let messagesDataSource = MockMessagesDataSource()
+    let sut = makeSUT()
     sut.messagesCollectionView.messagesDataSource = messagesDataSource
     let attributes = [NSAttributedString.Key.foregroundColor: UIColor.outgoingMessageLabel]
     let attriutedString = NSAttributedString(string: "Test", attributes: attributes)
@@ -126,6 +108,7 @@ final class MessagesViewControllerTests: XCTestCase {
 
   func testCellForItemWithPhotoData_returnsMediaMessageCell() {
     let messagesDataSource = MockMessagesDataSource()
+    let sut = makeSUT()
     sut.messagesCollectionView.messagesDataSource = messagesDataSource
     messagesDataSource.messages.append(MockMessage(
       image: UIImage(),
@@ -144,6 +127,7 @@ final class MessagesViewControllerTests: XCTestCase {
 
   func testCellForItemWithVideoData_returnsMediaMessageCell() {
     let messagesDataSource = MockMessagesDataSource()
+    let sut = makeSUT()
     sut.messagesCollectionView.messagesDataSource = messagesDataSource
     messagesDataSource.messages.append(MockMessage(
       thumbnail: UIImage(),
@@ -162,6 +146,7 @@ final class MessagesViewControllerTests: XCTestCase {
 
   func testCellForItemWithLocationData_returnsLocationMessageCell() {
     let messagesDataSource = MockMessagesDataSource()
+    let sut = makeSUT()
     sut.messagesCollectionView.messagesDataSource = messagesDataSource
     messagesDataSource.messages.append(MockMessage(
       location: CLLocation(latitude: 60.0, longitude: 70.0),
@@ -180,6 +165,7 @@ final class MessagesViewControllerTests: XCTestCase {
 
   func testCellForItemWithAudioData_returnsAudioMessageCell() {
     let messagesDataSource = MockMessagesDataSource()
+    let sut = makeSUT()
     sut.messagesCollectionView.messagesDataSource = messagesDataSource
     messagesDataSource.messages.append(MockMessage(
       audioURL: URL(fileURLWithPath: ""),
@@ -199,6 +185,7 @@ final class MessagesViewControllerTests: XCTestCase {
 
   func testCellForItemWithLinkPreviewData_returnsLinkPreviewMessageCell() {
     let messagesDataSource = MockMessagesDataSource()
+    let sut = makeSUT()
     sut.messagesCollectionView.messagesDataSource = messagesDataSource
 
     let linkItem = MockLinkItem(
@@ -252,8 +239,22 @@ final class MessagesViewControllerTests: XCTestCase {
 
   // MARK: Private
 
-  // swiftlint:disable weak_delegate
+  // swiftlint:disable:next weak_delegate
   private var layoutDelegate = MockLayoutDelegate()
+
+  // MARK: - Private helper API
+
+  private func makeSUT() -> MessagesViewController {
+    let sut = MessagesViewController()
+    sut.messagesCollectionView.messagesLayoutDelegate = layoutDelegate
+    sut.messagesCollectionView.messagesDisplayDelegate = layoutDelegate
+    _ = sut.view
+    sut.beginAppearanceTransition(true, animated: true)
+    sut.endAppearanceTransition()
+    sut.view.layoutIfNeeded()
+
+    return sut
+  }
 
   // MARK: - Assistants
 

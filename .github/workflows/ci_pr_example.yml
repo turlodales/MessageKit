@@ -10,7 +10,7 @@ concurrency:
 jobs:
   tests:
     name: Build Example app
-    runs-on: macos-14
+    runs-on: macos-15
     steps:
     - name: Checkout the Git repository
       uses: actions/checkout@v4
@@ -18,3 +18,5 @@ jobs:
         fetch-depth: 10
     - name: Build and run example project
       run: make build_example
+    - name: Run example UI tests
+      run: make test_example

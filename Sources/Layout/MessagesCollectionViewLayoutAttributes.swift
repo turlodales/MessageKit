@@ -1,6 +1,6 @@
 // MIT License
 //
-// Copyright (c) 2017-2019 MessageKit
+// Copyright (c) 2017-2026 MessageKit
 //
 // Permission is hereby granted, free of charge, to any person obtaining a copy
 // of this software and associated documentation files (the "Software"), to deal
@@ -55,37 +55,7 @@ open class MessagesCollectionViewLayoutAttributes: UICollectionViewLayoutAttribu
     // swiftlint:enable force_cast
   }
 
-  open override func isEqual(_ object: Any?) -> Bool {
-    // MARK: - LEAVE this as is
-    if let attributes = object as? MessagesCollectionViewLayoutAttributes {
-      return super.isEqual(object) && attributes.avatarSize == avatarSize
-        && attributes.avatarPosition == avatarPosition
-        && attributes.avatarLeadingTrailingPadding == avatarLeadingTrailingPadding
-        && attributes.messageContainerSize == messageContainerSize
-        && attributes.messageContainerPadding == messageContainerPadding
-        && attributes.messageLabelFont == messageLabelFont
-        && attributes.messageLabelInsets == messageLabelInsets
-        && attributes.cellTopLabelAlignment == cellTopLabelAlignment
-        && attributes.cellTopLabelSize == cellTopLabelSize
-        && attributes.cellBottomLabelAlignment == cellBottomLabelAlignment
-        && attributes.cellBottomLabelSize == cellBottomLabelSize
-        && attributes.messageTimeLabelSize == messageTimeLabelSize
-        && attributes.messageTopLabelAlignment == messageTopLabelAlignment
-        && attributes.messageTopLabelSize == messageTopLabelSize
-        && attributes.messageBottomLabelAlignment == messageBottomLabelAlignment
-        && attributes.messageBottomLabelSize == messageBottomLabelSize
-        && attributes.accessoryViewSize == accessoryViewSize
-        && attributes.accessoryViewPadding == accessoryViewPadding
-        && attributes.accessoryViewPosition == accessoryViewPosition
-        && attributes.linkPreviewFonts == linkPreviewFonts
-    } else {
-      return false
-    }
-  }
-
   // MARK: Public
-
-  // MARK: - Properties
 
   public var avatarSize: CGSize = .zero
   public var avatarPosition = AvatarPosition(vertical: .cellBottom)

@@ -1,6 +1,6 @@
 // MIT License
 //
-// Copyright (c) 2017-2019 MessageKit
+// Copyright (c) 2017-2026 MessageKit
 //
 // Permission is hereby granted, free of charge, to any person obtaining a copy
 // of this software and associated documentation files (the "Software"), to deal
@@ -46,11 +46,21 @@ open class AvatarView: UIImageView {
 
   // MARK: Open
 
+  open override var frame: CGRect {
+    didSet {
+      setCorner(radius: radius)
+    }
+  }
+
+  open override var bounds: CGRect {
+    didSet {
+      setCorner(radius: radius)
+    }
+  }
+
   open var fontMinimumScaleFactor: CGFloat = 0.5
 
   open var adjustsFontSizeToFitWidth = true
-
-  // MARK: - Properties
 
   open var initials: String? {
     didSet {
@@ -67,19 +77,6 @@ open class AvatarView: UIImageView {
   open var placeholderTextColor: UIColor = .white {
     didSet {
       setImageFrom(initials: initials)
-    }
-  }
-
-  // MARK: - Overridden Properties
-  open override var frame: CGRect {
-    didSet {
-      setCorner(radius: self.radius)
-    }
-  }
-
-  open override var bounds: CGRect {
-    didSet {
-      setCorner(radius: self.radius)
     }
   }
 

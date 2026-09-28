@@ -1,6 +1,6 @@
 // MIT License
 //
-// Copyright (c) 2017-2020 MessageKit
+// Copyright (c) 2017-2026 MessageKit
 //
 // Permission is hereby granted, free of charge, to any person obtaining a copy
 // of this software and associated documentation files (the "Software"), to deal
@@ -26,21 +26,12 @@ import XCTest
 
 // MARK: - MessageContentCellTests
 
+@MainActor
 final class MessageContentCellTests: XCTestCase {
-  var cell: MessageContentCell!
   let frame = CGRect(x: 0, y: 0, width: 100, height: 100)
 
-  override func setUp() {
-    super.setUp()
-    cell = MessageContentCell(frame: frame)
-  }
-
-  override func tearDown() {
-    cell = nil
-    super.tearDown()
-  }
-
   func testInit() {
+    let cell = MessageContentCell(frame: frame)
     XCTAssertEqual(cell.contentView.autoresizingMask, [.flexibleWidth, .flexibleHeight])
     XCTAssert(cell.contentView.subviews.contains(cell.cellTopLabel))
     XCTAssert(cell.contentView.subviews.contains(cell.messageBottomLabel))
@@ -49,11 +40,13 @@ final class MessageContentCellTests: XCTestCase {
   }
 
   func testMessageContainerViewPropertiesSetup() {
+    let cell = MessageContentCell(frame: frame)
     XCTAssertTrue(cell.messageContainerView.clipsToBounds)
     XCTAssertTrue(cell.messageContainerView.layer.masksToBounds)
   }
 
   func testPrepareForReuse() {
+    let cell = MessageContentCell(frame: frame)
     cell.prepareForReuse()
     XCTAssertNil(cell.cellTopLabel.text)
     XCTAssertNil(cell.cellTopLabel.attributedText)
@@ -62,6 +55,7 @@ final class MessageContentCellTests: XCTestCase {
   }
 
   func testApplyLayoutAttributes() {
+    let cell = MessageContentCell(frame: frame)
     let layoutAttributes = MessagesCollectionViewLayoutAttributes()
     layoutAttributes.avatarPosition = AvatarPosition(horizontal: .cellLeading, vertical: .cellBottom)
     cell.apply(layoutAttributes)
@@ -72,6 +66,8 @@ final class MessageContentCellTests: XCTestCase {
     XCTAssertEqual(cell.messageBottomLabel.frame.size, layoutAttributes.messageBottomLabelSize)
   }
 }
+
+// MARK: MessageContentCellTests.MockMessagesDisplayDelegate
 
 extension MessageContentCellTests {
   private class MockMessagesDisplayDelegate: MessagesDisplayDelegate {

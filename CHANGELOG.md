@@ -6,7 +6,25 @@ The changelog for `MessageKit`. Also see the [releases](https://github.com/Messa
 
 ### Added
 
+- Rename `MessagesDataSource.numberOfSections(in:)` to `numberOfMessageSections(in:)`, which says what it counts. The old name is deprecated but keeps working, so this is not a breaking change. See the [migration guide](https://github.com/MessageKit/MessageKit/blob/main/Documentation/MIGRATION_GUIDE.md) by [@martinpucik](https://github.com/martinpucik)
+- Add tests for `MessageSizeCalculator`, which covers the avatar position resolution, the sender specific avatar sizes and paddings, the container maximum width and the cell height, and had no tests before by [@martinpucik](https://github.com/martinpucik)
+- Add tests for `TypingIndicator` and `TypingBubble`, which cover the dot layout and spacing, the animation state flags, the animation layers and the pulse layers, and had no tests before by [@martinpucik](https://github.com/martinpucik)
+- Add a FAQ entry on changing the zoom level of location messages through the `span` of `LocationMessageSnapshotOptions` by [@martinpucik](https://github.com/martinpucik)
+- Add tests for the eight cell size calculators, which cover the text, media, audio, location, contact, link preview and typing indicator container sizes, the sender specific label insets and the layout attributes each one fills in, and had no tests before by [@martinpucik](https://github.com/martinpucik)
 ### Fixed
+
+- Document that `MessagesDataSource.numberOfSections(in:)` must return the message sections only, because `setTypingIndicatorViewHidden(_:animated:)` reserves the indicator's section itself. Counting it twice is the cause of the `Index out of range` and `Invalid number of sections` crashes in [#1788](https://github.com/MessageKit/MessageKit/issues/1788), [#1787](https://github.com/MessageKit/MessageKit/issues/1787) and [#1387](https://github.com/MessageKit/MessageKit/issues/1387), and the section arithmetic is now covered by tests by [@martinpucik](https://github.com/martinpucik)
+- Set every `MessageKit` owned file to one copyright header, which had drifted across `2017`, `2017-2018`, `2017-2019`, `2017-2020`, `2017-2022` and `2017-2026`, and enforce it through SwiftFormat's `fileHeader` rule so it cannot drift again. The example app files keep the authors they credit, and the two files that carry the copyright notice of the project MessageKit grew out of keep it by [@martinpucik](https://github.com/martinpucik)
+- Fix the input bar in the SwiftUI example sitting a home indicator inset above the keyboard rather than on top of it. `ignoresSafeArea(.keyboard, edges: .bottom)` left the bottom container inset in place, which stopped the view short of the screen edge, and the keyboard manager positions the bar a whole keyboard height above that edge by [@martinpucik](https://github.com/martinpucik)
+- **Breaking Change** Annotate `MessageCellDelegate` and `MessageLabelDelegate` with `@MainActor`. Their sibling delegate protocols `MessagesDataSource`, `MessagesLayoutDelegate` and `MessagesDisplayDelegate` already carried the annotation, so consumers building in the Swift 6 language mode had to work around these two with `@preconcurrency` by [@martinpucik](https://github.com/martinpucik)
+- Fix `make format`, `make lint` and the pre-commit hook, which still called the removed SwiftPM plugins by [@martinpucik](https://github.com/martinpucik)
+- Adopt the scene lifecycle in the example app, which crashed on launch on iOS 26 and later by [@martinpucik](https://github.com/martinpucik)
+- Add the missing camera and photo library usage descriptions to the example app, which crashed when you opened the camera by [@martinpucik](https://github.com/martinpucik)
+- Stop the example app from crashing when you switch off every message type in Settings by [@martinpucik](https://github.com/martinpucik)
+- Repair the example app UI test, which looked for a row that does not exist, and run it in CI by [@martinpucik](https://github.com/martinpucik)
+- Point the README and CONTRIBUTING links at the `main` branch, repair the malformed MessageInputBar guide link and the example app badge link, and refresh the Xcode badge by [@martinpucik](https://github.com/martinpucik)
+- Rewrite the manual installation guide, which told you to run Carthage and drag a `MessageKit.xcodeproj` that no longer exists, as local Swift package steps by [@martinpucik](https://github.com/martinpucik)
+- Stop the `make` targets pinning the `iPhone 16` simulator, which broke whenever a machine or CI image shipped a different model. Builds now ask for the platform only, and the test targets resolve an installed iPhone by [@martinpucik](https://github.com/martinpucik)
 
 ### Updated
 
@@ -14,7 +32,19 @@ The changelog for `MessageKit`. Also see the [releases](https://github.com/Messa
     
 ### Changed
 
+- Enforce `make lint` in CI and reformat the sources it flagged by [@martinpucik](https://github.com/martinpucik)
+- Build the example app in the Swift 6 language mode, so that CI exercises the same strict concurrency checking as the library, and replace its `DispatchQueue` hops with structured concurrency by [@martinpucik](https://github.com/martinpucik)
+
+- Migrate Danger from Ruby to Danger Swift and drop the `Gemfile` by [@martinpucik](https://github.com/martinpucik)
+
 ### Removed
+
+- **Breaking Change** Remove the `MessagesLayoutDelegate` methods that only called `fatalError`. They were deprecation shims for the 1.0 migration, they were never protocol requirements, and nothing called them. Use `incomingAvatarSize` and `outgoingAvatarSize` on the message size calculators, or the `avatarSize(for:at:in:)` requirement that returns an optional, by [@martinpucik](https://github.com/martinpucik)
+- Remove dead code and 13 unused image assets from the example app by [@martinpucik](https://github.com/martinpucik)
+- Remove `Sources/Supporting/MessageKit.h` and `Sources/Supporting/Info.plist`, the umbrella header and framework `Info.plist` left over from the Xcode framework target, and drop the `exclude` list they needed in `Package.swift` by [@martinpucik](https://github.com/martinpucik)
+- Remove `Tests/LinuxMain.swift` and the empty `MessageKitTests.swift` placeholder, which belonged to no target and described a Linux test runner that a UIKit library cannot use, by [@martinpucik](https://github.com/martinpucik)
+- Remove the legacy `.github/issue_template.md`, whose guidance the `ISSUE_TEMPLATE` directory already covers, by [@martinpucik](https://github.com/martinpucik)
+- Remove `.github/stale.yml`, which configured the probot Stale app. That app was archived in May 2023 and no workflow replaced it, so the file has had no effect since by [@martinpucik](https://github.com/martinpucik)
 
 ## 4.3.0
 - Fix for SwiftUI example IBAV position issues (example app) by @Janneman84 in https://github.com/MessageKit/MessageKit/pull/1807

@@ -1,6 +1,6 @@
 // MIT License
 //
-// Copyright (c) 2017-2022 MessageKit
+// Copyright (c) 2017-2026 MessageKit
 //
 // Permission is hereby granted, free of charge, to any person obtaining a copy
 // of this software and associated documentation files (the "Software"), to deal
@@ -31,8 +31,8 @@ open class MessagesViewController: UIViewController, UICollectionViewDelegateFlo
   // MARK: Lifecycle
 
   deinit {
-    removeMenuControllerObservers()
-    clearMemoryCache()
+    NotificationCenter.default.removeObserver(self, name: UIMenuController.willShowMenuNotification, object: nil)
+    MessageStyle.bubbleImageCache.removeAllObjects()
   }
 
   // MARK: Open
@@ -66,11 +66,6 @@ open class MessagesViewController: UIViewController, UICollectionViewDelegateFlo
     }
   }
 
-  /// withAdditionalBottomSpace parameter for InputBarAccessoryView's KeyboardManager
-  open func inputBarAdditionalBottomSpace() -> CGFloat {
-    0
-  }
-
   open override func viewDidLoad() {
     super.viewDidLoad()
     setupDefaults()
@@ -90,13 +85,18 @@ open class MessagesViewController: UIViewController, UICollectionViewDelegateFlo
     updateMessageCollectionViewBottomInset()
   }
 
+  /// withAdditionalBottomSpace parameter for InputBarAccessoryView's KeyboardManager
+  open func inputBarAdditionalBottomSpace() -> CGFloat {
+    0
+  }
+
   // MARK: - UICollectionViewDataSource
 
   open func numberOfSections(in collectionView: UICollectionView) -> Int {
     guard let collectionView = collectionView as? MessagesCollectionView else {
       fatalError(MessageKitError.notMessagesCollectionView)
     }
-    let sections = collectionView.messagesDataSource?.numberOfSections(in: collectionView) ?? 0
+    let sections = collectionView.messagesDataSource?.numberOfMessageSections(in: collectionView) ?? 0
     return collectionView.isTypingIndicatorHidden ? sections : sections + 1
   }
 
@@ -287,7 +287,7 @@ open class MessagesViewController: UIViewController, UICollectionViewDelegateFlo
     if isSectionReservedForTypingIndicator(indexPath.section) {
       return false
     }
-    return (action == NSSelectorFromString("copy:"))
+    return action == NSSelectorFromString("copy:")
   }
 
   open func collectionView(_: UICollectionView, performAction _: Selector, forItemAt indexPath: IndexPath, withSender _: Any?) {
@@ -314,8 +314,6 @@ open class MessagesViewController: UIViewController, UICollectionViewDelegateFlo
   public var selectedIndexPathForMenu: IndexPath?
 
   // MARK: Internal
-
-  // MARK: - Internal properties
 
   internal let state: State = .init()
 

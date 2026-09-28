@@ -1,6 +1,6 @@
 // MIT License
 //
-// Copyright (c) 2017-2019 MessageKit
+// Copyright (c) 2017-2026 MessageKit
 //
 // Permission is hereby granted, free of charge, to any person obtaining a copy
 // of this software and associated documentation files (the "Software"), to deal
@@ -24,6 +24,7 @@ import UIKit
 
 /// An object is responsible for
 /// sizing and configuring cells for given `IndexPath`s.
+@MainActor
 open class CellSizeCalculator {
   // MARK: Lifecycle
 

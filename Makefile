@@ -23,23 +23,45 @@
 .SHELLFLAGS = -ec
 .SHELL = /bin/bash
 
-test:
+# Building needs a platform, not a booted device, so ask for the platform only.
+# Naming a device model here breaks whenever a machine ships a different one.
+BUILD_DESTINATION = generic/platform=iOS Simulator
+
+# Running tests does need a real simulator, so resolve whichever iPhone is
+# installed rather than pinning a model. Override with `make test SIMULATOR_ID=<udid>`.
+SIMULATOR_ID ?= $(shell xcrun simctl list devices available | grep -m1 "iPhone" | grep -oE "[0-9A-F-]{36}")
+
+require_simulator:
+	@test -n "$(SIMULATOR_ID)" || { \
+		echo "No iPhone simulator is available."; \
+		echo "Install one from Xcode > Settings > Components, or pass SIMULATOR_ID=<udid>."; \
+		exit 1; \
+	}
+
+test: require_simulator
 	@echo "Running MessageKit tests."
-	@set -o pipefail && xcodebuild test -scheme MessageKit -sdk iphonesimulator -destination "platform=iOS Simulator,name=iPhone 15" | xcpretty -c
+	@set -o pipefail && xcodebuild test -scheme MessageKit -destination "id=$(SIMULATOR_ID)" | xcpretty -c
 
 framework:
 	@echo "Building MessageKit Framework."
-	@set -o pipefail && xcodebuild build -scheme MessageKit -destination "platform=iOS Simulator,name=iPhone 15" | xcpretty -c
+	@set -o pipefail && xcodebuild build -scheme MessageKit -destination "$(BUILD_DESTINATION)" | xcpretty -c
 
 build_example:
-	@echo "Building & testing MessageKit Example app."
-	@cd Example && set -o pipefail && xcodebuild build analyze -scheme ChatExample -destination "platform=iOS Simulator,name=iPhone 15" CODE_SIGNING_REQUIRED=NO | xcpretty -c
+	@echo "Building & analyzing MessageKit Example app."
+	@cd Example && set -o pipefail && xcodebuild build analyze -scheme ChatExample -destination "$(BUILD_DESTINATION)" CODE_SIGNING_REQUIRED=NO | xcpretty -c
+
+test_example: require_simulator
+	@echo "Running MessageKit Example app UI tests."
+	@cd Example && set -o pipefail && xcodebuild test -scheme ChatExampleUITests -destination "id=$(SIMULATOR_ID)" CODE_SIGNING_REQUIRED=NO | xcpretty -c
 
 format:
-	@swift package --allow-writing-to-package-directory format-source-code --file .
+	@echo "Formatting MessageKit."
+	@swiftformat .
 
 lint:
-	@swift package --disable-sandbox lint
+	@echo "Linting MessageKit."
+	@swiftformat --lint .
+	@swiftlint lint --quiet
 
 setup:
 	@mkdir -p .git/hooks

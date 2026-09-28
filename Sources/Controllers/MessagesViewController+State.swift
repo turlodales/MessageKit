@@ -1,6 +1,6 @@
 // MIT License
 //
-// Copyright (c) 2017-2022 MessageKit
+// Copyright (c) 2017-2026 MessageKit
 //
 // Permission is hereby granted, free of charge, to any person obtaining a copy
 // of this software and associated documentation files (the "Software"), to deal
@@ -26,6 +26,15 @@ import InputBarAccessoryView
 import UIKit
 
 extension MessagesViewController {
+  // MARK: Public
+
+  // MARK: - Getters
+
+  public var keyboardManager: KeyboardManager { state.keyboardManager }
+
+  // MARK: Internal
+
+  @MainActor
   final class State {
     /// Pan gesture for display the date of message by swiping left.
     var panGesture: UIPanGestureRecognizer?
@@ -37,10 +46,6 @@ extension MessagesViewController {
     let keyboardManager = KeyboardManager()
     var disposeBag: Set<AnyCancellable> = .init()
   }
-
-  // MARK: - Getters
-
-  public var keyboardManager: KeyboardManager { state.keyboardManager }
 
   var panGesture: UIPanGestureRecognizer? {
     get { state.panGesture }

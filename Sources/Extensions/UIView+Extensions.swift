@@ -1,6 +1,6 @@
 // MIT License
 //
-// Copyright (c) 2017-2022 MessageKit
+// Copyright (c) 2017-2026 MessageKit
 //
 // Permission is hereby granted, free of charge, to any person obtaining a copy
 // of this software and associated documentation files (the "Software"), to deal
@@ -75,7 +75,8 @@ extension UIView {
     centerYConstant: CGFloat = 0,
     centerXConstant: CGFloat = 0,
     widthConstant: CGFloat = 0,
-    heightConstant: CGFloat = 0) -> [NSLayoutConstraint]
+    heightConstant: CGFloat = 0)
+    -> [NSLayoutConstraint]
   {
     if superview == nil {
       return []

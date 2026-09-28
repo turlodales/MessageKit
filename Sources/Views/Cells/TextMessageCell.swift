@@ -1,6 +1,6 @@
 // MIT License
 //
-// Copyright (c) 2017-2019 MessageKit
+// Copyright (c) 2017-2026 MessageKit
 //
 // Permission is hereby granted, free of charge, to any person obtaining a copy
 // of this software and associated documentation files (the "Software"), to deal
@@ -24,17 +24,15 @@ import UIKit
 
 /// A subclass of `MessageContentCell` used to display text messages.
 open class TextMessageCell: MessageContentCell {
-  /// The label used to display the message's text.
-  open var messageLabel = MessageLabel()
-
-  // MARK: - Properties
-
   /// The `MessageCellDelegate` for the cell.
   open override weak var delegate: MessageCellDelegate? {
     didSet {
       messageLabel.delegate = delegate
     }
   }
+
+  /// The label used to display the message's text.
+  open var messageLabel = MessageLabel()
 
   // MARK: - Methods
 

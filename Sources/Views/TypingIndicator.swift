@@ -1,6 +1,6 @@
 // MIT License
 //
-// Copyright (c) 2017-2019 MessageKit
+// Copyright (c) 2017-2026 MessageKit
 //
 // Permission is hereby granted, free of charge, to any person obtaining a copy
 // of this software and associated documentation files (the "Software"), to deal
@@ -91,16 +91,17 @@ open class TypingIndicator: UIView {
     guard !isAnimating else { return }
     var delay: TimeInterval = 0
     for dot in dots {
+      let currentDelay = delay
       DispatchQueue.main.asyncAfter(deadline: .now() + delay) { [weak self] in
         guard let self = self else { return }
-        if self.isBounceEnabled {
-          dot.layer.add(self.initialOffsetAnimationLayer, forKey: AnimationKeys.offset)
-          let bounceLayer = self.bounceAnimationLayer
-          bounceLayer.timeOffset = delay + 0.33
+        if isBounceEnabled {
+          dot.layer.add(initialOffsetAnimationLayer, forKey: AnimationKeys.offset)
+          let bounceLayer = bounceAnimationLayer
+          bounceLayer.timeOffset = currentDelay + 0.33
           dot.layer.add(bounceLayer, forKey: AnimationKeys.bounce)
         }
-        if self.isFadeEnabled {
-          dot.layer.add(self.opacityAnimationLayer, forKey: AnimationKeys.opacity)
+        if isFadeEnabled {
+          dot.layer.add(opacityAnimationLayer, forKey: AnimationKeys.opacity)
         }
       }
       delay += 0.33
@@ -135,9 +136,7 @@ open class TypingIndicator: UIView {
 
   public let stackView = UIStackView()
 
-  public let dots: [BubbleCircle] = {
-    [BubbleCircle(), BubbleCircle(), BubbleCircle()]
-  }()
+  public let dots: [BubbleCircle] = [BubbleCircle(), BubbleCircle(), BubbleCircle()]
 
   // MARK: Private
 

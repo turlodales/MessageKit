@@ -1,6 +1,6 @@
 // MIT License
 //
-// Copyright (c) 2017-2020 MessageKit
+// Copyright (c) 2017-2026 MessageKit
 //
 // Permission is hereby granted, free of charge, to any person obtaining a copy
 // of this software and associated documentation files (the "Software"), to deal
@@ -24,21 +24,13 @@ import Foundation
 import XCTest
 @testable import MessageKit
 
+@MainActor
 final class AvatarViewTests: XCTestCase {
-  var avatarView: AvatarView!
-
-  override func setUp() {
-    super.setUp()
-    avatarView = AvatarView()
-    avatarView.frame.size = CGSize(width: 30, height: 30)
-  }
-
-  override func tearDown() {
-    super.tearDown()
-    avatarView = nil
-  }
+  // MARK: Internal
 
   func testNoParams() {
+    let avatarView = makeAvatarView()
+
     XCTAssertEqual(avatarView.layer.cornerRadius, 15.0)
     // For certain dynamic colors, need to compare cgColor in XCTest
     // https://stackoverflow.com/questions/58065340/how-to-compare-two-uidynamicprovidercolor
@@ -46,6 +38,8 @@ final class AvatarViewTests: XCTestCase {
   }
 
   func testWithImage() {
+    let avatarView = makeAvatarView()
+
     let avatar = Avatar(image: UIImage())
     avatarView.set(avatar: avatar)
     XCTAssertEqual(avatar.initials, "?")
@@ -54,6 +48,8 @@ final class AvatarViewTests: XCTestCase {
   }
 
   func testInitialsOnly() {
+    let avatarView = makeAvatarView()
+
     let avatar = Avatar(initials: "DL")
     avatarView.set(avatar: avatar)
     XCTAssertEqual(avatarView.initials, avatar.initials)
@@ -63,12 +59,15 @@ final class AvatarViewTests: XCTestCase {
   }
 
   func testSetBackground() {
+    let avatarView = makeAvatarView()
     XCTAssertEqual(avatarView.backgroundColor!.cgColor, UIColor.avatarViewBackground.cgColor)
     avatarView.backgroundColor = UIColor.red
     XCTAssertEqual(avatarView.backgroundColor!, UIColor.red)
   }
 
   func testGetImage() {
+    let avatarView = makeAvatarView()
+
     let image = UIImage()
     let avatar = Avatar(image: image)
     avatarView.set(avatar: avatar)
@@ -76,10 +75,22 @@ final class AvatarViewTests: XCTestCase {
   }
 
   func testRoundedCorners() {
+    let avatarView = makeAvatarView()
+
     let avatar = Avatar(image: UIImage())
     avatarView.set(avatar: avatar)
     XCTAssertEqual(avatarView.layer.cornerRadius, 15.0)
     avatarView.setCorner(radius: 2)
     XCTAssertEqual(avatarView.layer.cornerRadius, 2.0)
+  }
+
+  // MARK: Private
+
+  // MARK: - Private helper API
+
+  private func makeAvatarView() -> AvatarView {
+    let avatarView = AvatarView()
+    avatarView.frame.size = CGSize(width: 30, height: 30)
+    return avatarView
   }
 }

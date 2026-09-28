@@ -1,7 +1,6 @@
-//
 // MIT License
 //
-// Copyright (c) 2017-2020 MessageKit
+// Copyright (c) 2017-2026 MessageKit
 //
 // Permission is hereby granted, free of charge, to any person obtaining a copy
 // of this software and associated documentation files (the "Software"), to deal
@@ -36,7 +35,7 @@ class ChatViewController: MessagesViewController, MessagesDataSource {
   /// The `BasicAudioController` control the AVAudioPlayer state (play, pause, stop) and update audio cell UI accordingly.
   lazy var audioController = BasicAudioController(messageCollectionView: messagesCollectionView)
 
-  lazy var messageList: [MockMessage] = []
+  var messageList: [MockMessage] = []
 
   private(set) lazy var refreshControl: UIRefreshControl = {
     let control = UIRefreshControl()
@@ -75,27 +74,24 @@ class ChatViewController: MessagesViewController, MessagesDataSource {
   }
 
   func loadFirstMessages() {
-    DispatchQueue.global(qos: .userInitiated).async {
+    Task {
       let count = UserDefaults.standard.mockMessagesCount()
       SampleData.shared.getMessages(count: count) { messages in
-        DispatchQueue.main.async {
-          self.messageList = messages
-          self.messagesCollectionView.reloadData()
-          self.messagesCollectionView.scrollToLastItem(animated: false)
-        }
+        self.messageList = messages
+        self.messagesCollectionView.reloadData()
+        self.messagesCollectionView.scrollToLastItem(animated: false)
       }
     }
   }
 
   @objc
   func loadMoreMessages() {
-    DispatchQueue.global(qos: .userInitiated).asyncAfter(deadline: .now() + 1) {
+    Task {
+      try? await Task.sleep(nanoseconds: NSEC_PER_SEC)
       SampleData.shared.getMessages(count: 20) { messages in
-        DispatchQueue.main.async {
-          self.messageList.insert(contentsOf: messages, at: 0)
-          self.messagesCollectionView.reloadDataAndKeepOffset()
-          self.refreshControl.endRefreshing()
-        }
+        self.messageList.insert(contentsOf: messages, at: 0)
+        self.messagesCollectionView.reloadDataAndKeepOffset()
+        self.refreshControl.endRefreshing()
       }
     }
   }
@@ -145,7 +141,7 @@ class ChatViewController: MessagesViewController, MessagesDataSource {
     return messagesCollectionView.indexPathsForVisibleItems.contains(lastIndexPath)
   }
 
-  func numberOfSections(in _: MessagesCollectionView) -> Int {
+  func numberOfMessageSections(in _: MessagesCollectionView) -> Int {
     messageList.count
   }
 
@@ -314,9 +310,9 @@ extension ChatViewController: MessageLabelDelegate {
   }
 }
 
-// MARK: InputBarAccessoryViewDelegate
+// MARK: @preconcurrency InputBarAccessoryViewDelegate
 
-extension ChatViewController: InputBarAccessoryViewDelegate {
+extension ChatViewController: @preconcurrency InputBarAccessoryViewDelegate {
   // MARK: Internal
 
   @objc
@@ -329,7 +325,6 @@ extension ChatViewController: InputBarAccessoryViewDelegate {
     let attributedText = inputBar.inputTextView.attributedText!
     let range = NSRange(location: 0, length: attributedText.length)
     attributedText.enumerateAttribute(.autocompleted, in: range, options: []) { _, range, _ in
-
       let substring = attributedText.attributedSubstring(from: range)
       let context = substring.attribute(.autocompletedContext, at: 0, effectiveRange: nil)
       print("Autocompleted: `", substring, "` with context: ", context ?? "-")
@@ -343,15 +338,13 @@ extension ChatViewController: InputBarAccessoryViewDelegate {
     inputBar.inputTextView.placeholder = "Sending..."
     // Resign first responder for iPad split view
     inputBar.inputTextView.resignFirstResponder()
-    DispatchQueue.global(qos: .default).async {
+    Task { [weak self] in
       // fake send request task
-      sleep(1)
-      DispatchQueue.main.async { [weak self] in
-        inputBar.sendButton.stopAnimating()
-        inputBar.inputTextView.placeholder = "Aa"
-        self?.insertMessages(components)
-        self?.messagesCollectionView.scrollToLastItem(animated: true)
-      }
+      try? await Task.sleep(nanoseconds: NSEC_PER_SEC)
+      inputBar.sendButton.stopAnimating()
+      inputBar.inputTextView.placeholder = "Aa"
+      self?.insertMessages(components)
+      self?.messagesCollectionView.scrollToLastItem(animated: true)
     }
   }
 

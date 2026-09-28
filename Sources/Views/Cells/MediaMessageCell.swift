@@ -1,6 +1,6 @@
 // MIT License
 //
-// Copyright (c) 2017-2019 MessageKit
+// Copyright (c) 2017-2026 MessageKit
 //
 // Permission is hereby granted, free of charge, to any person obtaining a copy
 // of this software and associated documentation files (the "Software"), to deal
@@ -36,15 +36,6 @@ open class MediaMessageCell: MessageContentCell {
     imageView.contentMode = .scaleAspectFill
     return imageView
   }()
-
-  // MARK: - Methods
-
-  /// Responsible for setting up the constraints of the cell's subviews.
-  open func setupConstraints() {
-    imageView.fillSuperview()
-    playButtonView.centerInSuperview()
-    playButtonView.constraint(equalTo: CGSize(width: 35, height: 35))
-  }
 
   open override func setupSubviews() {
     super.setupSubviews()
@@ -92,5 +83,14 @@ open class MediaMessageCell: MessageContentCell {
       return
     }
     delegate?.didTapImage(in: self)
+  }
+
+  // MARK: - Methods
+
+  /// Responsible for setting up the constraints of the cell's subviews.
+  open func setupConstraints() {
+    imageView.fillSuperview()
+    playButtonView.centerInSuperview()
+    playButtonView.constraint(equalTo: CGSize(width: 35, height: 35))
   }
 }

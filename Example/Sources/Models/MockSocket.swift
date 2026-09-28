@@ -1,6 +1,6 @@
 // MIT License
 //
-// Copyright (c) 2017-2019 MessageKit
+// Copyright (c) 2017-2026 MessageKit
 //
 // Permission is hereby granted, free of charge, to any person obtaining a copy
 // of this software and associated documentation files (the "Software"), to deal
@@ -23,6 +23,7 @@
 import MessageKit
 import UIKit
 
+@MainActor
 final class MockSocket {
   // MARK: Lifecycle
 
@@ -30,7 +31,7 @@ final class MockSocket {
 
   // MARK: Internal
 
-  static var shared = MockSocket()
+  static let shared = MockSocket()
 
   @discardableResult
   func connect(with senders: [MockUser]) -> Self {

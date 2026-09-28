@@ -1,6 +1,6 @@
 // MIT License
 //
-// Copyright (c) 2017-2019 MessageKit
+// Copyright (c) 2017-2026 MessageKit
 //
 // Permission is hereby granted, free of charge, to any person obtaining a copy
 // of this software and associated documentation files (the "Software"), to deal
@@ -24,6 +24,15 @@ import MapKit
 import UIKit
 
 final class MessageContainerController: UIViewController {
+  override var preferredStatusBarStyle: UIStatusBarStyle {
+    .lightContent
+  }
+
+  /// Required for the `MessageInputBar` to be visible
+  override var canBecomeFirstResponder: Bool {
+    conversationViewController.canBecomeFirstResponder
+  }
+
   let mapView = MKMapView()
 
   let bannerView: UIView = {
@@ -34,15 +43,6 @@ final class MessageContainerController: UIViewController {
   }()
 
   let conversationViewController = BasicExampleViewController()
-
-  override var preferredStatusBarStyle: UIStatusBarStyle {
-    .lightContent
-  }
-
-  /// Required for the `MessageInputBar` to be visible
-  override var canBecomeFirstResponder: Bool {
-    conversationViewController.canBecomeFirstResponder
-  }
 
   override func viewDidLoad() {
     super.viewDidLoad()

@@ -1,6 +1,6 @@
 // MIT License
 //
-// Copyright (c) 2017-2020 MessageKit
+// Copyright (c) 2017-2026 MessageKit
 //
 // Permission is hereby granted, free of charge, to any person obtaining a copy
 // of this software and associated documentation files (the "Software"), to deal
@@ -45,8 +45,6 @@ open class MessagesCollectionView: UICollectionView {
 
   // MARK: Open
 
-  // MARK: - Properties
-
   open weak var messagesDataSource: MessagesDataSource?
 
   open weak var messagesDisplayDelegate: MessagesDisplayDelegate?
@@ -84,6 +82,21 @@ open class MessagesCollectionView: UICollectionView {
     guard let indexPath = indexPathForLastItem else { return }
 
     scrollToItem(at: indexPath, at: pos, animated: animated)
+  }
+
+  public func scrollToBottom(animated: Bool = true) {
+    guard let indexPath = indexPathForLastItem else { return }
+
+    // scroll to the item without animation to get the desired offset
+    scrollToItem(at: indexPath, at: .bottom, animated: false)
+    let targetOffset = contentOffset
+
+    // calculate the adjusted offset, considering the bottom section inset
+    let sectionInsetBottom = (collectionViewLayout as? UICollectionViewFlowLayout)?.sectionInset.bottom ?? 0
+    let adjustedOffset = CGPoint(x: targetOffset.x, y: targetOffset.y + sectionInsetBottom)
+
+    // set content offset to the adjusted offset
+    setContentOffset(adjustedOffset, animated: animated)
   }
 
   public func reloadDataAndKeepOffset() {

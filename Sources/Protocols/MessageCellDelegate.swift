@@ -1,6 +1,6 @@
 // MIT License
 //
-// Copyright (c) 2017-2019 MessageKit
+// Copyright (c) 2017-2026 MessageKit
 //
 // Permission is hereby granted, free of charge, to any person obtaining a copy
 // of this software and associated documentation files (the "Software"), to deal
@@ -25,6 +25,7 @@ import Foundation
 // MARK: - MessageCellDelegate
 
 /// A protocol used by `MessageContentCell` subclasses to detect taps in the cell's subviews.
+@MainActor
 public protocol MessageCellDelegate: MessageLabelDelegate {
   /// Triggered when a tap occurs in the background of the cell.
   ///

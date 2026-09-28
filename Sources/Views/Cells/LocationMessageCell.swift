@@ -1,6 +1,6 @@
 // MIT License
 //
-// Copyright (c) 2017-2019 MessageKit
+// Copyright (c) 2017-2026 MessageKit
 //
 // Permission is hereby granted, free of charge, to any person obtaining a copy
 // of this software and associated documentation files (the "Software"), to deal
@@ -41,12 +41,6 @@ open class LocationMessageCell: MessageContentCell {
     setupConstraints()
   }
 
-  /// Responsible for setting up the constraints of the cell's subviews.
-  open func setupConstraints() {
-    imageView.fillSuperview()
-    activityIndicator.centerInSuperview()
-  }
-
   open override func prepareForReuse() {
     super.prepareForReuse()
     snapShotter?.cancel()
@@ -58,6 +52,13 @@ open class LocationMessageCell: MessageContentCell {
     and messagesCollectionView: MessagesCollectionView)
   {
     super.configure(with: message, at: indexPath, and: messagesCollectionView)
+
+    guard case .location(let locationItem) = message.kind
+    else { fatalError("Configuring LocationMessageCell with wrong message kind") }
+    guard CLLocationCoordinate2DIsValid(locationItem.location.coordinate) else {
+      return
+    }
+
     guard let displayDelegate = messagesCollectionView.messagesDisplayDelegate else {
       fatalError(MessageKitError.nilMessagesDisplayDelegate)
     }
@@ -70,8 +71,6 @@ open class LocationMessageCell: MessageContentCell {
       message: message,
       at: indexPath,
       in: messagesCollectionView)
-
-    guard case .location(let locationItem) = message.kind else { fatalError("Configuring LocationMessageCell with wrong") }
 
     activityIndicator.startAnimating()
 
@@ -114,6 +113,12 @@ open class LocationMessageCell: MessageContentCell {
       self.imageView.image = composedImage
       animationBlock?(self.imageView)
     }
+  }
+
+  /// Responsible for setting up the constraints of the cell's subviews.
+  open func setupConstraints() {
+    imageView.fillSuperview()
+    activityIndicator.centerInSuperview()
   }
 
   // MARK: Private

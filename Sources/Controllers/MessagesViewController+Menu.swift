@@ -1,6 +1,6 @@
 // MIT License
 //
-// Copyright (c) 2017-2022 MessageKit
+// Copyright (c) 2017-2026 MessageKit
 //
 // Permission is hereby granted, free of charge, to any person obtaining a copy
 // of this software and associated documentation files (the "Software"), to deal
@@ -34,10 +34,6 @@ extension MessagesViewController {
       selector: #selector(MessagesViewController.menuControllerWillShow(_:)),
       name: UIMenuController.willShowMenuNotification,
       object: nil)
-  }
-
-  internal func removeMenuControllerObservers() {
-    NotificationCenter.default.removeObserver(self, name: UIMenuController.willShowMenuNotification, object: nil)
   }
 
   // MARK: Private

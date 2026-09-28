@@ -1,6 +1,6 @@
 // MIT License
 //
-// Copyright (c) 2017-2019 MessageKit
+// Copyright (c) 2017-2026 MessageKit
 //
 // Permission is hereby granted, free of charge, to any person obtaining a copy
 // of this software and associated documentation files (the "Software"), to deal
@@ -26,26 +26,6 @@ import UIKit
 /// A subclass of `MessageContentCell` used to display video and audio messages.
 open class AudioMessageCell: MessageContentCell {
   // MARK: Open
-
-  /// Responsible for setting up the constraints of the cell's subviews.
-  open func setupConstraints() {
-    playButton.constraint(equalTo: CGSize(width: 25, height: 25))
-    playButton.addConstraints(
-      left: messageContainerView.leftAnchor,
-      centerY: messageContainerView.centerYAnchor,
-      leftConstant: 5)
-    activityIndicatorView.addConstraints(centerY: playButton.centerYAnchor, centerX: playButton.centerXAnchor)
-    durationLabel.addConstraints(
-      right: messageContainerView.rightAnchor,
-      centerY: messageContainerView.centerYAnchor,
-      rightConstant: 15)
-    progressView.addConstraints(
-      left: playButton.rightAnchor,
-      right: durationLabel.leftAnchor,
-      centerY: messageContainerView.centerYAnchor,
-      leftConstant: 5,
-      rightConstant: 5)
-  }
 
   open override func setupSubviews() {
     super.setupSubviews()
@@ -124,6 +104,26 @@ open class AudioMessageCell: MessageContentCell {
     }
 
     displayDelegate.configureAudioCell(self, message: message)
+  }
+
+  /// Responsible for setting up the constraints of the cell's subviews.
+  open func setupConstraints() {
+    playButton.constraint(equalTo: CGSize(width: 25, height: 25))
+    playButton.addConstraints(
+      left: messageContainerView.leftAnchor,
+      centerY: messageContainerView.centerYAnchor,
+      leftConstant: 5)
+    activityIndicatorView.addConstraints(centerY: playButton.centerYAnchor, centerX: playButton.centerXAnchor)
+    durationLabel.addConstraints(
+      right: messageContainerView.rightAnchor,
+      centerY: messageContainerView.centerYAnchor,
+      rightConstant: 15)
+    progressView.addConstraints(
+      left: playButton.rightAnchor,
+      right: durationLabel.leftAnchor,
+      centerY: messageContainerView.centerYAnchor,
+      leftConstant: 5,
+      rightConstant: 5)
   }
 
   // MARK: Public

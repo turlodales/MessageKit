@@ -1,6 +1,6 @@
 // MIT License
 //
-// Copyright (c) 2017-2019 MessageKit
+// Copyright (c) 2017-2026 MessageKit
 //
 // Permission is hereby granted, free of charge, to any person obtaining a copy
 // of this software and associated documentation files (the "Software"), to deal
@@ -23,6 +23,7 @@
 import MapKit
 
 /// An object grouping the settings used by the `MKMapSnapshotter` through the `LocationMessageDisplayDelegate`.
+@MainActor
 public struct LocationMessageSnapshotOptions {
   // MARK: Lifecycle
 

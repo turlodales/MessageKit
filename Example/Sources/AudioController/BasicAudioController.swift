@@ -1,6 +1,6 @@
 // MIT License
 //
-// Copyright (c) 2017-2019 MessageKit
+// Copyright (c) 2017-2026 MessageKit
 //
 // Permission is hereby granted, free of charge, to any person obtaining a copy
 // of this software and associated documentation files (the "Software"), to deal
@@ -42,7 +42,8 @@ public enum PlayerState {
 
 /// The `BasicAudioController` update UI for current audio cell that is playing a sound
 /// and also creates and manage an `AVAudioPlayer` states, play, pause and stop.
-open class BasicAudioController: NSObject, AVAudioPlayerDelegate {
+@MainActor
+open class BasicAudioController: NSObject, @preconcurrency AVAudioPlayerDelegate {
   // MARK: Lifecycle
 
   // MARK: - Init Methods

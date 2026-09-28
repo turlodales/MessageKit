@@ -1,6 +1,6 @@
 // MIT License
 //
-// Copyright (c) 2017-2020 MessageKit
+// Copyright (c) 2017-2026 MessageKit
 //
 // Permission is hereby granted, free of charge, to any person obtaining a copy
 // of this software and associated documentation files (the "Software"), to deal
@@ -24,9 +24,9 @@ import Foundation
 
 extension Bundle {
   #if IS_SPM
-  internal static var messageKitAssetBundle = Bundle.module
+  nonisolated internal static let messageKitAssetBundle = Bundle.module
   #else
-  internal static var messageKitAssetBundle: Bundle {
+  nonisolated internal static var messageKitAssetBundle: Bundle {
     Bundle(for: MessagesViewController.self)
   }
   #endif

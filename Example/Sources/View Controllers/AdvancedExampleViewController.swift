@@ -1,6 +1,6 @@
 // MIT License
 //
-// Copyright (c) 2017-2020 MessageKit
+// Copyright (c) 2017-2026 MessageKit
 //
 // Permission is hereby granted, free of charge, to any person obtaining a copy
 // of this software and associated documentation files (the "Software"), to deal
@@ -83,26 +83,23 @@ final class AdvancedExampleViewController: ChatViewController {
   }
 
   override func loadFirstMessages() {
-    DispatchQueue.global(qos: .userInitiated).async {
+    Task {
       let count = UserDefaults.standard.mockMessagesCount()
       SampleData.shared.getAdvancedMessages(count: count) { messages in
-        DispatchQueue.main.async {
-          self.messageList = messages
-          self.messagesCollectionView.reloadData()
-          self.messagesCollectionView.scrollToLastItem()
-        }
+        self.messageList = messages
+        self.messagesCollectionView.reloadData()
+        self.messagesCollectionView.scrollToLastItem()
       }
     }
   }
 
   override func loadMoreMessages() {
-    DispatchQueue.global(qos: .userInitiated).asyncAfter(deadline: .now() + 1) {
+    Task {
+      try? await Task.sleep(nanoseconds: NSEC_PER_SEC)
       SampleData.shared.getAdvancedMessages(count: 20) { messages in
-        DispatchQueue.main.async {
-          self.messageList.insert(contentsOf: messages, at: 0)
-          self.messagesCollectionView.reloadDataAndKeepOffset()
-          self.refreshControl.endRefreshing()
-        }
+        self.messageList.insert(contentsOf: messages, at: 0)
+        self.messagesCollectionView.reloadDataAndKeepOffset()
+        self.refreshControl.endRefreshing()
       }
     }
   }
@@ -148,8 +145,6 @@ final class AdvancedExampleViewController: ChatViewController {
   }
 
   override func configureMessageInputBar() {
-    // super.configureMessageInputBar()
-
     messageInputBar = CameraInputBarAccessoryView()
     messageInputBar.delegate = self
     messageInputBar.inputTextView.tintColor = .primaryColor
@@ -172,31 +167,6 @@ final class AdvancedExampleViewController: ChatViewController {
     messageInputBar.inputTextView.scrollIndicatorInsets = UIEdgeInsets(top: 8, left: 0, bottom: 8, right: 0)
     configureInputBarItems()
     inputBarType = .custom(messageInputBar)
-  }
-
-  // MARK: - Helpers
-
-  func isTimeLabelVisible(at indexPath: IndexPath) -> Bool {
-    indexPath.section % 3 == 0 && !isPreviousMessageSameSender(at: indexPath)
-  }
-
-  func isPreviousMessageSameSender(at indexPath: IndexPath) -> Bool {
-    guard indexPath.section - 1 >= 0 else { return false }
-    return messageList[indexPath.section].user == messageList[indexPath.section - 1].user
-  }
-
-  func isNextMessageSameSender(at indexPath: IndexPath) -> Bool {
-    guard indexPath.section + 1 < messageList.count else { return false }
-    return messageList[indexPath.section].user == messageList[indexPath.section + 1].user
-  }
-
-    func setTypingIndicatorViewHidden(_ isHidden: Bool, animated: Bool, performUpdates updates: (() -> Void)? = nil) {
-    updateTitleView(title: "MessageKit", subtitle: isHidden ? "2 Online" : "Typing...")
-    setTypingIndicatorViewHidden(isHidden, animated: animated, whilePerforming: updates) { [weak self] success in
-      if success, self?.isLastSectionVisible() == true {
-        self?.messagesCollectionView.scrollToLastItem(animated: true)
-      }
-    }
   }
 
   // MARK: - MessagesDataSource
@@ -230,6 +200,31 @@ final class AdvancedExampleViewController: ChatViewController {
         attributes: [NSAttributedString.Key.font: UIFont.preferredFont(forTextStyle: .caption1)])
     }
     return nil
+  }
+
+  // MARK: - Helpers
+
+  func isTimeLabelVisible(at indexPath: IndexPath) -> Bool {
+    indexPath.section % 3 == 0 && !isPreviousMessageSameSender(at: indexPath)
+  }
+
+  func isPreviousMessageSameSender(at indexPath: IndexPath) -> Bool {
+    guard indexPath.section - 1 >= 0 else { return false }
+    return messageList[indexPath.section].user == messageList[indexPath.section - 1].user
+  }
+
+  func isNextMessageSameSender(at indexPath: IndexPath) -> Bool {
+    guard indexPath.section + 1 < messageList.count else { return false }
+    return messageList[indexPath.section].user == messageList[indexPath.section + 1].user
+  }
+
+  func setTypingIndicatorViewHidden(_ isHidden: Bool, animated: Bool, performUpdates updates: (() -> Void)? = nil) {
+    updateTitleView(title: "MessageKit", subtitle: isHidden ? "2 Online" : "Typing...")
+    setTypingIndicatorViewHidden(isHidden, animated: animated, whilePerforming: updates) { [weak self] success in
+      if success, self?.isLastSectionVisible() == true {
+        self?.messagesCollectionView.scrollToLastItem(animated: true)
+      }
+    }
   }
 
   // MARK: Private
@@ -292,30 +287,6 @@ final class AdvancedExampleViewController: ChatViewController {
     // or InputTextView padding
     messageInputBar.inputTextView.textContainerInset.bottom = 8
   }
-
-  private func makeButton(named: String) -> InputBarButtonItem {
-    InputBarButtonItem()
-      .configure {
-        $0.spacing = .fixed(10)
-        $0.image = UIImage(named: named)?.withRenderingMode(.alwaysTemplate)
-        $0.setSize(CGSize(width: 25, height: 25), animated: false)
-        $0.tintColor = UIColor(white: 0.8, alpha: 1)
-      }.onSelected {
-        $0.tintColor = .primaryColor
-      }.onDeselected {
-        $0.tintColor = UIColor(white: 0.8, alpha: 1)
-      }.onTouchUpInside {
-        print("Item Tapped")
-        let actionSheet = UIAlertController(title: nil, message: nil, preferredStyle: .actionSheet)
-        let action = UIAlertAction(title: "Cancel", style: .cancel, handler: nil)
-        actionSheet.addAction(action)
-        if let popoverPresentationController = actionSheet.popoverPresentationController {
-          popoverPresentationController.sourceView = $0
-          popoverPresentationController.sourceRect = $0.frame
-        }
-        self.navigationController?.present(actionSheet, animated: true, completion: nil)
-      }
-  }
 }
 
 // MARK: MessagesDisplayDelegate
@@ -330,7 +301,8 @@ extension AdvancedExampleViewController: MessagesDisplayDelegate {
   func detectorAttributes(
     for detector: DetectorType,
     and message: MessageType,
-    at _: IndexPath) -> [NSAttributedString.Key: Any]
+    at _: IndexPath)
+    -> [NSAttributedString.Key: Any]
   {
     switch detector {
     case .hashtag, .mention:
@@ -445,7 +417,8 @@ extension AdvancedExampleViewController: MessagesDisplayDelegate {
   func animationBlockForLocation(
     message _: MessageType,
     at _: IndexPath,
-    in _: MessagesCollectionView) -> ((UIImageView) -> Void)?
+    in _: MessagesCollectionView)
+    -> ((UIImageView) -> Void)?
   {
     { view in
       view.layer.transform = CATransform3DMakeScale(2, 2, 2)
@@ -517,7 +490,7 @@ extension AdvancedExampleViewController: CameraInputBarAccessoryViewDelegate {
   func inputBar(_ inputBar: InputBarAccessoryView, didPressSendButtonWith attachments: [AttachmentManager.Attachment]) {
     for item in attachments {
       if case .image(let image) = item {
-        self.sendImageMessage(photo: image)
+        sendImageMessage(photo: image)
       }
     }
     inputBar.invalidatePlugins()

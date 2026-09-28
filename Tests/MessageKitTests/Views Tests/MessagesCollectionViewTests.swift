@@ -1,6 +1,6 @@
 // MIT License
 //
-// Copyright (c) 2017-2020 MessageKit
+// Copyright (c) 2017-2026 MessageKit
 //
 // Permission is hereby granted, free of charge, to any person obtaining a copy
 // of this software and associated documentation files (the "Software"), to deal
@@ -23,22 +23,13 @@
 import XCTest
 @testable import MessageKit
 
+@MainActor
 class MessagesCollectionViewTests: XCTestCase {
-  var messagesCollectionView: MessagesCollectionView!
   let rect = CGRect(x: 0, y: 0, width: 100, height: 100)
   let layout = MessagesCollectionViewFlowLayout()
 
-  override func setUp() {
-    super.setUp()
-    messagesCollectionView = MessagesCollectionView(frame: rect, collectionViewLayout: layout)
-  }
-
-  override func tearDown() {
-    messagesCollectionView = nil
-    super.tearDown()
-  }
-
   func testInit() {
+    let messagesCollectionView = MessagesCollectionView(frame: rect, collectionViewLayout: layout)
     XCTAssertEqual(messagesCollectionView.frame, rect)
     XCTAssertEqual(messagesCollectionView.collectionViewLayout, layout)
     XCTAssertEqual(messagesCollectionView.backgroundColor, UIColor.collectionViewBackground)

@@ -1,6 +1,6 @@
 // MIT License
 //
-// Copyright (c) 2017-2019 MessageKit
+// Copyright (c) 2017-2026 MessageKit
 //
 // Permission is hereby granted, free of charge, to any person obtaining a copy
 // of this software and associated documentation files (the "Software"), to deal
@@ -38,15 +38,15 @@ open class CustomCell: UICollectionViewCell {
 
   // MARK: Open
 
+  open override func layoutSubviews() {
+    super.layoutSubviews()
+    label.frame = contentView.bounds
+  }
+
   open func setupSubviews() {
     contentView.addSubview(label)
     label.textAlignment = .center
     label.font = UIFont.italicSystemFont(ofSize: 13)
-  }
-
-  open override func layoutSubviews() {
-    super.layoutSubviews()
-    label.frame = contentView.bounds
   }
 
   open func configure(with message: MessageType, at _: IndexPath, and _: MessagesCollectionView) {

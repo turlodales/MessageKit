@@ -1,6 +1,6 @@
 // MIT License
 //
-// Copyright (c) 2017-2020 MessageKit
+// Copyright (c) 2017-2026 MessageKit
 //
 // Permission is hereby granted, free of charge, to any person obtaining a copy
 // of this software and associated documentation files (the "Software"), to deal
@@ -26,27 +26,12 @@ import XCTest
 
 // MARK: - MessagesDisplayDelegateTests
 
+@MainActor
 final class MessagesDisplayDelegateTests: XCTestCase {
   // MARK: Internal
 
-  override func setUp() {
-    super.setUp()
-
-    sut = MockMessagesViewController()
-    _ = sut.view
-    sut.beginAppearanceTransition(true, animated: true)
-    sut.endAppearanceTransition()
-    sut.viewDidLoad()
-    sut.view.layoutIfNeeded()
-  }
-
-  override func tearDown() {
-    sut = nil
-
-    super.tearDown()
-  }
-
   func testBackGroundColorDefaultState() {
+    let sut = makeSUT()
     XCTAssertEqual(
       sut.backgroundColor(
         for: sut.dataProvider.messages[0],
@@ -74,6 +59,7 @@ final class MessagesDisplayDelegateTests: XCTestCase {
   }
 
   func testBackgroundColorWithoutDataSource_returnsWhiteForDefault() {
+    let sut = makeSUT()
     sut.messagesCollectionView.messagesDataSource = nil
     let backgroundColor = sut.backgroundColor(
       for: sut.dataProvider.messages[0],
@@ -84,6 +70,7 @@ final class MessagesDisplayDelegateTests: XCTestCase {
   }
 
   func testBackgroundColorForMessageWithEmoji_returnsClearForDefault() {
+    let sut = makeSUT()
     sut.dataProvider.messages.append(MockMessage(
       emoji: "🤔",
       user: sut.dataProvider.currentUser,
@@ -97,18 +84,21 @@ final class MessagesDisplayDelegateTests: XCTestCase {
   }
 
   func testCellTopLabelDefaultState() {
+    let sut = makeSUT()
     XCTAssertNil(sut.dataProvider.cellTopLabelAttributedText(
       for: sut.dataProvider.messages[0],
       at: IndexPath(item: 0, section: 0)))
   }
 
   func testMessageBottomLabelDefaultState() {
+    let sut = makeSUT()
     XCTAssertNil(sut.dataProvider.messageBottomLabelAttributedText(
       for: sut.dataProvider.messages[0],
       at: IndexPath(item: 0, section: 0)))
   }
 
   func testMessageStyle_returnsBubleTypeForDefault() {
+    let sut = makeSUT()
     let type = sut.messageStyle(
       for: sut.dataProvider.messages[0],
       at: IndexPath(item: 0, section: 0),
@@ -126,6 +116,7 @@ final class MessagesDisplayDelegateTests: XCTestCase {
   }
 
   func testMessageHeaderView_isNotNil() {
+    let sut = makeSUT()
     let indexPath = IndexPath(item: 0, section: 1)
     XCTAssert(sut.dataProvider != nil)
     let headerView = sut.messageHeaderView(for: indexPath, in: sut.messagesCollectionView)
@@ -134,30 +125,28 @@ final class MessagesDisplayDelegateTests: XCTestCase {
 
   // MARK: Private
 
-  private var sut: MockMessagesViewController!
+  // MARK: - Private helper API
+
+  private func makeSUT() -> MockMessagesViewController {
+    let sut = MockMessagesViewController()
+    _ = sut.view
+    sut.beginAppearanceTransition(true, animated: true)
+    sut.endAppearanceTransition()
+    sut.viewDidLoad()
+    sut.view.layoutIfNeeded()
+
+    return sut
+  }
 }
 
 // MARK: - TextMessageDisplayDelegateTests
 
+@MainActor
 class TextMessageDisplayDelegateTests: XCTestCase {
   // MARK: Internal
 
-  override func setUp() {
-    super.setUp()
-
-    sut = MockMessagesViewController()
-    _ = sut.view
-    sut.beginAppearanceTransition(true, animated: true)
-    sut.endAppearanceTransition()
-  }
-
-  override func tearDown() {
-    sut = nil
-
-    super.tearDown()
-  }
-
   func testTextColorFromCurrentSender_returnsWhiteForDefault() {
+    let sut = makeSUT()
     let textColor = sut.textColor(
       for: sut.dataProvider.messages[0],
       at: IndexPath(item: 0, section: 0),
@@ -167,6 +156,7 @@ class TextMessageDisplayDelegateTests: XCTestCase {
   }
 
   func testTextColorFromYou_returnsDarkTextForDefault() {
+    let sut = makeSUT()
     let textColor = sut.textColor(
       for: sut.dataProvider.messages[1],
       at: IndexPath(item: 0, section: 0),
@@ -176,6 +166,7 @@ class TextMessageDisplayDelegateTests: XCTestCase {
   }
 
   func testTextColorWithoutDataSource_returnsDarkTextForDefault() {
+    let sut = makeSUT()
     let dataSource = sut.makeDataSource()
     sut.messagesCollectionView.messagesDataSource = dataSource
     let textColor = sut.textColor(
@@ -187,6 +178,7 @@ class TextMessageDisplayDelegateTests: XCTestCase {
   }
 
   func testEnableDetectors_returnsEmptyForDefault() {
+    let sut = makeSUT()
     let detectors = sut.enabledDetectors(
       for: sut.dataProvider.messages[1],
       at: IndexPath(item: 0, section: 0),
@@ -198,19 +190,24 @@ class TextMessageDisplayDelegateTests: XCTestCase {
 
   // MARK: Private
 
-  private var sut: MockMessagesViewController!
+  // MARK: - Private helper API
+
+  private func makeSUT() -> MockMessagesViewController {
+    let sut = MockMessagesViewController()
+    _ = sut.view
+    sut.beginAppearanceTransition(true, animated: true)
+    sut.endAppearanceTransition()
+    return sut
+  }
 }
 
 // MARK: - MockMessagesViewController
 
+@MainActor
 private class MockMessagesViewController: MessagesViewController, MessagesDisplayDelegate, MessagesLayoutDelegate {
   // MARK: Internal
 
   var dataProvider: MockMessagesDataSource!
-
-  func heightForLocation(message _: MessageType, at _: IndexPath, with _: CGFloat, in _: MessagesCollectionView) -> CGFloat {
-    200
-  }
 
   override func viewDidLoad() {
     super.viewDidLoad()
@@ -220,6 +217,10 @@ private class MockMessagesViewController: MessagesViewController, MessagesDispla
     messagesCollectionView.messagesDataSource = dataProvider
     messagesCollectionView.messagesLayoutDelegate = self
     messagesCollectionView.reloadData()
+  }
+
+  func heightForLocation(message _: MessageType, at _: IndexPath, with _: CGFloat, in _: MessagesCollectionView) -> CGFloat {
+    200
   }
 
   func snapshotOptionsForLocation(

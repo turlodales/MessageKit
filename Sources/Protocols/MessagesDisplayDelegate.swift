@@ -1,6 +1,6 @@
 // MIT License
 //
-// Copyright (c) 2017-2019 MessageKit
+// Copyright (c) 2017-2026 MessageKit
 //
 // Permission is hereby granted, free of charge, to any person obtaining a copy
 // of this software and associated documentation files (the "Software"), to deal
@@ -27,6 +27,7 @@ import UIKit
 // MARK: - MessagesDisplayDelegate
 
 /// A protocol used by the `MessagesViewController` to customize the appearance of a `MessageContentCell`.
+@MainActor
 public protocol MessagesDisplayDelegate: AnyObject {
   // MARK: - All Messages
 
@@ -157,7 +158,8 @@ public protocol MessagesDisplayDelegate: AnyObject {
   func snapshotOptionsForLocation(
     message: MessageType,
     at indexPath: IndexPath,
-    in messagesCollectionView: MessagesCollectionView) -> LocationMessageSnapshotOptions
+    in messagesCollectionView: MessagesCollectionView)
+    -> LocationMessageSnapshotOptions
 
   /// Used to configure the annotation view of the map image on the given location message.
   ///
@@ -169,7 +171,8 @@ public protocol MessagesDisplayDelegate: AnyObject {
   func annotationViewForLocation(
     message: MessageType,
     at indexPath: IndexPath,
-    in messageCollectionView: MessagesCollectionView) -> MKAnnotationView?
+    in messageCollectionView: MessagesCollectionView)
+    -> MKAnnotationView?
 
   /// Ask the delegate for a custom animation block to run when whe map screenshot is ready to be displaied in the given location message.
   /// The animation block is called with the `UIImageView` to be animated.
@@ -182,7 +185,8 @@ public protocol MessagesDisplayDelegate: AnyObject {
   func animationBlockForLocation(
     message: MessageType,
     at indexPath: IndexPath,
-    in messagesCollectionView: MessagesCollectionView) -> ((UIImageView) -> Void)?
+    in messagesCollectionView: MessagesCollectionView)
+    -> ((UIImageView) -> Void)?
 
   // MARK: - Media Messages
 
@@ -241,7 +245,8 @@ public protocol MessagesDisplayDelegate: AnyObject {
   func audioProgressTextFormat(
     _ duration: Float,
     for audioCell: AudioMessageCell,
-    in messageCollectionView: MessagesCollectionView) -> String
+    in messageCollectionView: MessagesCollectionView)
+    -> String
 
   /// Used to configure the `UIImageView` of a `LinkPreviewMessageCell`.
   /// - Parameters:
@@ -347,7 +352,8 @@ extension MessagesDisplayDelegate {
   public func animationBlockForLocation(
     message _: MessageType,
     at _: IndexPath,
-    in _: MessagesCollectionView) -> ((UIImageView) -> Void)?
+    in _: MessagesCollectionView)
+    -> ((UIImageView) -> Void)?
   {
     nil
   }

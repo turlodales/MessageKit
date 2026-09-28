@@ -1,6 +1,6 @@
 // MIT License
 //
-// Copyright (c) 2017-2022 MessageKit
+// Copyright (c) 2017-2026 MessageKit
 //
 // Permission is hereby granted, free of charge, to any person obtaining a copy
 // of this software and associated documentation files (the "Software"), to deal
@@ -316,17 +316,20 @@ open class MessageSizeCalculator: CellSizeCalculator {
   }
 
   // MARK: Internal
+
   internal lazy var textContainer: NSTextContainer = {
     let textContainer = NSTextContainer()
     textContainer.maximumNumberOfLines = 0
     textContainer.lineFragmentPadding = 0
     return textContainer
   }()
+
   internal lazy var layoutManager: NSLayoutManager = {
     let layoutManager = NSLayoutManager()
     layoutManager.addTextContainer(textContainer)
     return layoutManager
   }()
+
   internal lazy var textStorage: NSTextStorage = {
     let textStorage = NSTextStorage()
     textStorage.addLayoutManager(layoutManager)

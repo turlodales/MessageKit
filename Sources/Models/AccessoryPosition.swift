@@ -1,6 +1,6 @@
 // MIT License
 //
-// Copyright (c) 2017-2019 MessageKit
+// Copyright (c) 2017-2026 MessageKit
 //
 // Permission is hereby granted, free of charge, to any person obtaining a copy
 // of this software and associated documentation files (the "Software"), to deal
@@ -24,7 +24,7 @@ import Foundation
 
 /// Used to determine the `Horizontal` and `Vertical` position of
 /// an `AccessoryView` in a `MessageCollectionViewCell`.
-public enum AccessoryPosition {
+public enum AccessoryPosition: Equatable {
   /// Aligns the `AccessoryView`'s top edge to the cell's top edge.
   case cellTop
 

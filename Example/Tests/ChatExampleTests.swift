@@ -1,3 +1,7 @@
+// swiftformat:disable fileHeader
+// This file keeps the copyright notice of the project MessageKit grew out
+// of. The MIT licence requires that notice to stay with the code, and the
+// fileHeader rule would otherwise replace it.
 //
 //  Created by Jesse Squires
 //  http://www.jessesquires.com
@@ -19,17 +23,24 @@
 import XCTest
 @testable import ChatExample
 
+@MainActor
 final class ChatExampleTests: XCTestCase {
-  override func setUp() {
-    super.setUp()
-  }
+  /// Settings lets every message type be switched off. `randomMessageType()` used to
+  /// force unwrap the empty result, which crashed the app on the next message.
+  func testRandomMessageTypeFallsBackToTextWhenNothingIsEnabled() {
+    let defaults = UserDefaults.standard
+    let keys = SampleData.MessageTypes.allCases.map { "\($0.rawValue) Messages" }
+    let previous = keys.map { defaults.object(forKey: $0) }
+    defer {
+      for (key, value) in zip(keys, previous) {
+        value.map { defaults.set($0, forKey: key) } ?? defaults.removeObject(forKey: key)
+      }
+    }
 
-  override func tearDown() {
-    super.tearDown()
-  }
+    for key in keys {
+      defaults.set(false, forKey: key)
+    }
 
-  func testExample() {
-    // This is an example of a functional test case.
-    // Use XCTAssert and related functions to verify your tests produce the correct results.
+    XCTAssertEqual(SampleData.shared.randomMessageType(), .Text)
   }
 }
